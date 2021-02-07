@@ -25,14 +25,33 @@ public class Board extends JPanel implements KeyListener {
     private int delayTimeForMovement = normal;
     private long beginTime;
 
+    private int deltaX = 0;
+    private boolean collision = false;
+
     public Board() {
         looper = new Timer(delay, new ActionListener() {
             int n = 0;
 
             @Override
             public void actionPerformed(ActionEvent e) {
+//               checks vertical collision
+                if(collision){
+                    return;
+                }
+
+//                checks horizpntal movement
+                if(!(gravity_x + deltaX + shape[0].length > 10) && (gravity_x + deltaX < 0)){
+                    gravity_x += deltaX;
+                }
+                deltaX = 0;
+
                 if(System.currentTimeMillis() - beginTime > delayTimeForMovement){
-                    gravity_y++;
+                    if(!(gravity_y + 1 + shape.length > BOARD_HEIGHT)){
+                        gravity_y++;
+                    }
+                    else {
+                        collision = true;
+                    }
                     beginTime = System.currentTimeMillis();
                 }
                 repaint();
@@ -78,14 +97,20 @@ public class Board extends JPanel implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if(e.getKeyChar() == KeyEvent.VK_DOWN || e.getKeyChar() == KeyEvent.VK_S){
+        if(e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_S){
             delayTimeForMovement = fast;
+        }
+        else if(e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_D){
+            deltaX = 1;
+        }
+        else if(e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_A){
+            deltaX = - 1;
         }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        if(e.getKeyChar() == KeyEvent.VK_DOWN || e.getKeyChar() == KeyEvent.VK_S){
+        if(e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_S){
             delayTimeForMovement = normal;
         }
 
