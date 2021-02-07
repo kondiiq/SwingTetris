@@ -6,7 +6,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class Board extends JPanel implements KeyListener {
-    private  static int FPS = 60; //FramePerSecond
+    private static int FPS = 60; //FramePerSecond
     private static int delay = FPS / 1000;
     public static final int BOARD_WIDTH = 10;
     public static final int BOARD_HEIGHT = 33;
@@ -14,51 +14,70 @@ public class Board extends JPanel implements KeyListener {
     private Timer looper;// Timer
     private Color[][] board = new Color[BOARD_WIDTH][BOARD_HEIGHT];
 
-    private Color[][] shape = {
-            {Color.RED, Color.RED, Color.RED},
-            {null, Color.RED, null}
-    };
+    private Color[] colors ={Color.decode("#ed1c24"), Color.decode("#ff7f27"), Color.decode("#fff200"), Color.decode("#22b14c"),
+            Color.decode("#00a2e8"), Color.decode("#a349a4"), Color.decode("#3f4cc")};
+    private Shape currentShape;
 
-    private int gravity_x = 4, gravity_y = 0;
-    private int normal = 600;
-    private int fast = 50;
-    private int delayTimeForMovement = normal;
-    private long beginTime;
-
-    private int deltaX = 0;
-    private boolean collision = false;
+    private Shape[] shape_form = new Shape[7];
 
     public Board() {
+        shape_form[0] = new Shape(new int[][]{
+            {1, 1, 1, 1}  // I-shape
+        }, this, colors[0]);
+
+        shape_form[1] = new Shape(new int[][]{
+                {1, 1, 1},
+                {0, 1, 0}, // T-shape
+        }, this, colors[1]);
+
+        shape_form[2] = new Shape(new int[][]{
+                {1, 1, 1},
+                {1, 0, 0}, //L-Shape
+        }, this, colors[2]);
+
+        shape_form[3] = new Shape(new int[][]{
+                {1, 1, 1},
+                {0, 0, 1},// J-Shape
+        }, this, colors[3]);
+
+        shape_form[4] = new Shape(new int[][]{
+                {0, 1, 1},
+                {1, 1, 0},//s-shape
+        }, this, colors[4]);
+
+        shape_form[5] = new Shape(new int[][]{
+                {1, 1, 0},
+                {0, 1, 1}, //Z-shape
+        }, this, colors[5]);
+
+        shape_form[6] = new Shape(new int[][]{
+                {1, 1},
+                {1, 1}, // Square-Shape
+        }, this, colors[6]);
+
+        currentShape = shape_form[0];
+
         looper = new Timer(delay, new ActionListener() {
             int n = 0;
 
             @Override
             public void actionPerformed(ActionEvent e) {
-//               checks vertical collision
-                if(collision){
-                    return;
-                }
-
-//                checks horizpntal movement
-                if(!(gravity_x + deltaX + shape[0].length > 10) && (gravity_x + deltaX < 0)){
-                    gravity_x += deltaX;
-                }
-                deltaX = 0;
-
-                if(System.currentTimeMillis() - beginTime > delayTimeForMovement){
-                    if(!(gravity_y + 1 + shape.length > BOARD_HEIGHT)){
-                        gravity_y++;
-                    }
-                    else {
-                        collision = true;
-                    }
-                    beginTime = System.currentTimeMillis();
-                }
+                update();
                 repaint();
             }
         });
         looper.start();
     }
+
+    private void update(){
+        currentShape.update();
+    }
+
+    public void setCurrentShape(){
+        currentShape = shape_form[1];
+        currentShape.reset();
+    }
+
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -67,15 +86,18 @@ public class Board extends JPanel implements KeyListener {
         g.setColor(Color.black);
         g.fillRect(0, 0, getWidth(), getHeight());
 
-//        Color and draw shapes shape
-        for (int row = 0; row < shape.length; row++) {
-            for (int column = 0; column < shape[0].length; column++) {
-                if (shape[row][column] != null) {
-                    g.setColor(shape[row][column]);
-                    g.fillRect(column * BLOCK_SIZE + gravity_x * BLOCK_SIZE, row * BLOCK_SIZE + gravity_y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+        currentShape.render(g);
+
+        for(int row = 0; row < board.length; row++){
+            for(int col = 0; col < board[row].length; col++){
+                if(board[row][col] != null){
+                    g.setColor(board[row][col]);
+                    g.fillRect(col * BLOCK_SIZE, row * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
                 }
+
             }
         }
+
 //draw  board
         g.setColor(Color.WHITE);
         for (int row = 0; row < BOARD_HEIGHT; row++) {
@@ -90,6 +112,10 @@ public class Board extends JPanel implements KeyListener {
 
     }
 
+    public  Color [][] getBoard(){
+        return board;
+    }
+
     @Override
     public void keyTyped(KeyEvent e) {
 
@@ -97,22 +123,19 @@ public class Board extends JPanel implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if(e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_S){
-            delayTimeForMovement = fast;
-        }
-        else if(e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_D){
-            deltaX = 1;
-        }
-        else if(e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_A){
-            deltaX = - 1;
+        if (e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_S) {
+            currentShape.speedUP();
+        } else if (e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_D) {
+            currentShape.moveRight();
+        } else if (e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_A) {
+            currentShape.moveLeft();
         }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        if(e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_S){
-            delayTimeForMovement = normal;
+        if (e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_S) {
+            currentShape.speedDOWN();
         }
-
     }
 }
