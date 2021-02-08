@@ -6,7 +6,7 @@ import javax.imageio.ImageIO;
 public class ImageLoader {
     public static BufferedImage loadImage(String path) {
         try {
-            return ImageIO.read(new File("data" + path));
+            return ImageIO.read(new File("data\\image" + path));
 
         } catch (IOException e) {
             e.printStackTrace();

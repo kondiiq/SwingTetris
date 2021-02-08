@@ -8,13 +8,13 @@ public class GameWindow {
     private JFrame window;
 
     public GameWindow() {
-
-        window = new JFrame("Tetris");
+// Winow attributes
+        window = new JFrame("TetrisAWT");
         window.setSize(WIDTH, HEIGHT);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setLocationRelativeTo(null);
         window.setResizable(false);
-
+// Game board
         board = new Board();
         title = new Title(this);
 
@@ -25,7 +25,7 @@ public class GameWindow {
 
         window.setVisible(true);
     }
-
+//game loop
     public void startTetris() {
         window.remove(title);
         window.addMouseMotionListener(board);
@@ -38,5 +38,4 @@ public class GameWindow {
     public static void main(String[] args) {
         new GameWindow();
     }
-
 }

@@ -1,17 +1,10 @@
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Rectangle;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
-
-import javax.swing.JPanel;
-import javax.swing.Timer;
 
 public class Title extends JPanel implements KeyListener {
     private static final long serialVersionUID = 1L;
@@ -29,29 +22,22 @@ public class Title extends JPanel implements KeyListener {
             public void actionPerformed(ActionEvent e) {
                 repaint();
             }
-
         });
         timer.start();
         this.window = window;
-
-
     }
 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
         g.setColor(Color.BLACK);
-
         g.fillRect(0, 0, GameWindow.WIDTH, GameWindow.HEIGHT);
-
 
         g.drawImage(instructions, GameWindow.WIDTH / 2 - instructions.getWidth() / 2,
                 30 - instructions.getHeight() / 2 + 150, null);
 
         g.setColor(Color.WHITE);
         g.drawString("Press space to play!", 150, GameWindow.HEIGHT / 2 + 100);
-
-
     }
 
     @Override

@@ -5,27 +5,17 @@ import java.awt.Graphics;
 public class Shape {
 
     private Color color;
-
     private int x, y;
-
     private long time, lastTime;
-
     private int normal = 600, fast = 50;
-
     private int delay;
-
     private int[][] coords;
-
     private int[][] reference;
-
     private int deltaX;
-
     private Board board;
-
     private boolean collision = false, moveX = false;
-
     private int timePassedFromCollision = -1;
-
+//constructor of shape
     public Shape(int[][] coords, Board board, Color color) {
         this.coords = coords;
         this.board = board;
@@ -39,11 +29,9 @@ public class Shape {
         reference = new int[coords.length][coords[0].length];
 
         System.arraycopy(coords, 0, reference, 0, coords.length);
-
     }
-
     long deltaTime;
-
+//update cordinates, position move and collision
     public void update() {
         moveX = true;
         deltaTime = System.currentTimeMillis() - lastTime;
@@ -73,17 +61,13 @@ public class Shape {
                         if (board.getBoard()[y + row][x + deltaX + col] != null) {
                             moveX = false;
                         }
-
                     }
                 }
             }
-
             if (moveX) {
                 x += deltaX;
             }
-
         }
-
         // Check position + height(number of row) of shape
         if (timePassedFromCollision == -1) {
             if (!(y + 1 + coords.length > 20)) {
@@ -108,17 +92,15 @@ public class Shape {
         } else {
             timePassedFromCollision += deltaTime;
         }
-
         deltaX = 0;
     }
-
+// set collision
     private void collision() {
         collision = true;
         timePassedFromCollision = 0;
     }
-
+//render block
     public void render(Graphics g) {
-
         g.setColor(color);
         for (int row = 0; row < coords.length; row++) {
             for (int col = 0; col < coords[0].length; col++) {
@@ -127,7 +109,6 @@ public class Shape {
                 }
             }
         }
-
     }
 
     private void checkLine() {
@@ -147,7 +128,7 @@ public class Shape {
             }
         }
     }
-
+//
     public void rotateShape() {
 
         int[][] rotatedShape = null;
@@ -196,7 +177,7 @@ public class Shape {
         return matrix;
 
     }
-
+//getters and set delta - mocing right/left
     public Color getColor() {
         return color;
     }
