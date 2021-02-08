@@ -1,27 +1,42 @@
-import javax.swing.*;
+import javax.swing.JFrame;
 
 public class GameWindow {
-
-    public static final int WIDTH = 768;
-    public static final int HEIGHT = 1024;
+    public static final int WIDTH = 1024, HEIGHT = 768;
 
     private Board board;
-    private JFrame mainwindow;
+    private Title title;
+    private JFrame window;
 
     public GameWindow() {
-        mainwindow = new JFrame("Tetris");
-        mainwindow.setSize(WIDTH, HEIGHT);
-        mainwindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        mainwindow.setResizable(false);
-        mainwindow.setLocationRelativeTo(null);
+
+        window = new JFrame("Tetris");
+        window.setSize(WIDTH, HEIGHT);
+        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        window.setLocationRelativeTo(null);
+        window.setResizable(false);
 
         board = new Board();
-        mainwindow.add(board);
-        mainwindow.addKeyListener(board);
-        mainwindow.setVisible(true);
+        title = new Title(this);
+
+        window.addKeyListener(board);
+        window.addKeyListener(title);
+
+        window.add(title);
+
+        window.setVisible(true);
+    }
+
+    public void startTetris() {
+        window.remove(title);
+        window.addMouseMotionListener(board);
+        window.addMouseListener(board);
+        window.add(board);
+        board.startGame();
+        window.revalidate();
     }
 
     public static void main(String[] args) {
         new GameWindow();
     }
+
 }
